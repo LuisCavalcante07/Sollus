@@ -11,6 +11,7 @@ const Login = () => {
     
   const handleLogin = () => {
     router.push("Cadastro");
+    Alert.alert("Canastrão")
   };
   const cad = () => {
     router.push("Home");

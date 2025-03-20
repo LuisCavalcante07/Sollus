@@ -1,18 +1,20 @@
-import dotenv from 'dotenv';
 import express from 'express';
+import dotenv from 'dotenv';
+import connect from "./database.js";
 
-import api from 'fastify'
-const fastify = api({ logger: true })
+import authRoutes from "./routes/auth.route.js";
 
-fastify.post('/cadastrar', async (request, reply) => {
-  const {email, senha} = request.body // Pega o email e senha do body
-  reply.status(201).send({response: email})
-})
+dotenv.config();
 
-// Run the server!
-try {
-  await fastify.listen({ port: 5000 })
-} catch (err) {
-  fastify.log.error(err)
-  process.exit(1)
-}
+const app = express();
+const PORT = process.env.PORT || 5000
+
+app.use(express.json())
+
+app.use("/api/auth", authRoutes);
+
+
+app.listen(PORT, () => {
+  connect();
+  console.log("Server running on port: ", PORT);
+});

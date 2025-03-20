@@ -1,16 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar, Image } from 'react-native';
 import styles from './StyleCadastro2';
 import { Input } from '../../Components/Input/Input';
-import Svg, { Path } from 'react-native-svg';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors } from '../../styles';
 
 const Cadastro2 = () => {
-    const [nome, setNome] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordc, setPasswordc] = useState('');
+    const router = useRouter();
+    const params = useLocalSearchParams();
+
+    // Função para garantir que o valor recebido é uma string
+    const getParam = (param: string | string[] | undefined) => {
+        return param ? decodeURIComponent(Array.isArray(param) ? param[0] : param) : '';
+    };
+
+    // Pegando os valores passados da tela anterior
+    const nome = getParam(params.nome);
+    const sobrenome = getParam(params.sobrenome);
+    const numero = getParam(params.numero);
+
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [passwordc, setPasswordc] = useState<string>('');
+
+    // Exibir um alert ao carregar a tela com os dados recebidos
+    useEffect(() => {
+        Alert.alert("Dados Recuperados", `Nome: ${nome}\nSobrenome: ${sobrenome}\nNúmero: ${numero}`);
+    }, []);
 
     const handleCadastro = () => {
-        Alert.alert('Cadastro', `Nome: ${nome}\nPassword: ${password}\nPasswordc: ${passwordc}`);
+        if (!email || !password || !passwordc) {
+            Alert.alert("Erro", "Todos os campos devem ser preenchidos");
+            return;
+        }
+
+        if (password !== passwordc) {
+            Alert.alert("Erro", "As senhas não coincidem");
+            return;
+        }
+
+
+        Alert.alert(
+            "Cadastro",
+            `Nome: ${nome}\nSobrenome: ${sobrenome}\nNúmero: ${numero}\nEmail: ${email}\nSenha: ${password}`
+        );
     };
 
     return (
@@ -18,25 +52,13 @@ const Cadastro2 = () => {
             <View style={styles.container}>
                 <StatusBar barStyle="light-content" />
 
-                <Svg
-                    width="53"
-                    height="53"
-                    viewBox="0 0 53 53"
-                    fill="none"
-                    style={{ position: 'absolute', top: 17, left: 25 }}
-                >
-                    <Path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M11 15.2376L11 29.7641C11 34.8246 14.5843 38 19.6565 38H33.3435C38.4157 38 42 34.8414 42 29.7641L42 15.2376C42 10.1603 38.4157 7 33.3435 7L19.6565 7C14.5843 7 11 10.1603 11 15.2376Z"
-                        stroke="#00B15E"
-                        strokeWidth="2.51351"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    />
-                    <Path d="M19.6532 22.5L33.3468 22.5" stroke="#00B15E" strokeWidth="2.51351" strokeLinecap="round" strokeLinejoin="round" />
-                    <Path d="M25.96 28.7805L19.6527 22.5L25.96 16.2196" stroke="#00B15E" strokeWidth="2.51351" strokeLinecap="round" strokeLinejoin="round" />
-                </Svg>
+                <MaterialCommunityIcons
+                    name="arrow-left-circle"
+                    size={39}
+                    color={colors.StrongGreen}
+                    style={{ position: 'absolute', top: 17, left: 25, marginTop: 50 }}
+                    onPress={() => router.push("Cadastro")}
+                />
 
                 <View style={[styles.logoContainer, { marginTop: 80 }]}>
                     <Image source={require('../../assets/logo.png')} style={styles.logo} />
@@ -44,9 +66,9 @@ const Cadastro2 = () => {
                 </View>
 
                 <View style={styles.inputContainer}>
-                    <Input label="Email" icone="person-outline" placeholder="Digite seu email" onChangeText={setNome} value={nome} />
-                    <Input label="Senha" icone="lock-outline" placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password}/>
-                    <Input label="Confirmar senha" icone="lock-outline" placeholder="Confirme sua senha" secureTextEntry={true} onChangeText={setPasswordc} value={passwordc}/>
+                    <Input label="Email" icone="mail-outline" placeholder="Digite seu email" onChangeText={setEmail} value={email} />
+                    <Input label="Senha" icone="lock-outline" placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password} />
+                    <Input label="Confirmar senha" icone="lock-outline" placeholder="Confirme sua senha" secureTextEntry={true} onChangeText={setPasswordc} value={passwordc} />
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleCadastro}>

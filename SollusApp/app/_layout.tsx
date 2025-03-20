@@ -14,6 +14,7 @@ export default function Layout() {
         <Stack screenOptions={{headerShown: false}}>
             <Stack.Screen name="Login/index"/>
             <Stack.Screen name="Cadastro/index"/>
+            <Stack.Screen name="Cadastro2/index"/>
             <Stack.Screen name="Esqueci/index"/>
             <Stack.Screen name="Home/index"/>
 

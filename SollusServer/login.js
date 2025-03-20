@@ -1,14 +1,16 @@
-import User from "./model/userModel.js"
+import User from "./model/user.model.js"
 import connect from "./database.js"
-import Dados from "./model/dataModel.js";
+import Dados from "./model/data.model.js";
 
  async function cadastrar(){
     await connect();
     
     await User.create({
-        userid: "23",
-        email:"JNDJNJNJNJ",
-        password:"20",
+        name: "luisfelipe",
+        lastname: "cavalcante",
+        phone: "9299456883",
+        email: "luisfelipe@gmail.com",
+        password: "123445",
     })
  }
 
@@ -16,13 +18,13 @@ import Dados from "./model/dataModel.js";
     await connect();
 
     await Dados.create({
-        nitrogenio: "31",
+        nitrogenio: "121",
         fosforo: "672",
-        potassio: "39",
-        humidade: "497",
-        temperatura: "542",
-        condutividade: "632",
-        pH: "4567897",
+        potassio: "40",
+        humidade: "5748",
+        temperatura: "2",
+        condutividade: "12",
+        pH: "090909",
     })
  }
 
