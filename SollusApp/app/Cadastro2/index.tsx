@@ -1,50 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar, Image } from 'react-native';
 import styles from './StyleCadastro2';
 import { Input } from '../../Components/Input/Input';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '../../styles';
+import { useAuthStore } from '../../store/authStore';
 
-const Cadastro2 = () => {
+const Cadastro2 = () => { 
     const router = useRouter();
-    const params = useLocalSearchParams();
+    const { signup, error, isLoading } = useAuthStore();
+    const {email, password, passwordc} = useLocalSearchParams();
+    const [name, setName] = useState<string>('');
+    const [lastname, setLastname] = useState<string>('');
+    const [phone, setPhone] = useState<string>(''); // Alterado para string para evitar erro
 
-    // Função para garantir que o valor recebido é uma string
-    const getParam = (param: string | string[] | undefined) => {
-        return param ? decodeURIComponent(Array.isArray(param) ? param[0] : param) : '';
-    };
-
-    // Pegando os valores passados da tela anterior
-    const nome = getParam(params.nome);
-    const sobrenome = getParam(params.sobrenome);
-    const numero = getParam(params.numero);
-
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [passwordc, setPasswordc] = useState<string>('');
-
-    // Exibir um alert ao carregar a tela com os dados recebidos
-    useEffect(() => {
-        Alert.alert("Dados Recuperados", `Nome: ${nome}\nSobrenome: ${sobrenome}\nNúmero: ${numero}`);
-    }, []);
-
-    const handleCadastro = () => {
-        if (!email || !password || !passwordc) {
+    const handlePerfil = async () => {
+        if (!name || !lastname || !phone) {
             Alert.alert("Erro", "Todos os campos devem ser preenchidos");
             return;
         }
-
-        if (password !== passwordc) {
-            Alert.alert("Erro", "As senhas não coincidem");
-            return;
+        console.log(name, lastname, phone, email, password, passwordc);
+        try {
+            await signup(name, lastname, phone, email, password, passwordc)
+            Alert.alert("Sucesso", "Cadastro realizado com sucesso")
+            router.push("Login");
+        } catch (error) {
+            console.error("Erro no cadastro:", error);
+            const errorMessage = (error as any).response?.data?.message || "Erro desconhecido";
+            Alert.alert("Erro no cadastro", errorMessage);
         }
-
-
-        Alert.alert(
-            "Cadastro",
-            `Nome: ${nome}\nSobrenome: ${sobrenome}\nNúmero: ${numero}\nEmail: ${email}\nSenha: ${password}`
-        );
     };
 
     return (
@@ -57,21 +42,22 @@ const Cadastro2 = () => {
                     size={39}
                     color={colors.StrongGreen}
                     style={{ position: 'absolute', top: 17, left: 25, marginTop: 50 }}
-                    onPress={() => router.push("Cadastro")}
+                    onPress={() => router.push("Login")}
                 />
 
-                <View style={[styles.logoContainer, { marginTop: 80 }]}>
-                    <Image source={require('../../assets/logo.png')} style={styles.logo} />
-                    <Text style={styles.title}>Criar conta</Text>
-                </View>
+                    <View style={styles.logoContainer}>
+                        <Image source={require('../../assets/logotext.png')} style={styles.logo} />
+                        <Text style={styles.title}>Criar conta</Text>
+                    </View>
 
-                <View style={styles.inputContainer}>
-                    <Input label="Email" icone="mail-outline" placeholder="Digite seu email" onChangeText={setEmail} value={email} />
-                    <Input label="Senha" icone="lock-outline" placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password} />
-                    <Input label="Confirmar senha" icone="lock-outline" placeholder="Confirme sua senha" secureTextEntry={true} onChangeText={setPasswordc} value={passwordc} />
-                </View>
+                    <View style={styles.inputContainer}>
+                        <Input label="Nome" icone="person-outline" placeholder="Digite seu nome" onChangeText={setName} value={name} />
+                        <Input label="Sobrenome" icone="person-outline" placeholder="Digite seu sobrenome" onChangeText={setLastname} value={lastname} />
+                        <Input label="Número" icone="phone" placeholder="Digite seu número" onChangeText={setPhone} value={phone} />
+                    </View>
+                
 
-                <TouchableOpacity style={styles.button} onPress={handleCadastro}>
+                <TouchableOpacity style={styles.button} onPress={handlePerfil}>
                     <Text style={styles.buttonText}>Cadastrar</Text>
                 </TouchableOpacity>
             </View>

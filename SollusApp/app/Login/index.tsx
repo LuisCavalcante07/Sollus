@@ -3,19 +3,31 @@ import { Text, View, Image, TouchableOpacity, Alert, TouchableWithoutFeedback, K
 import styles from './StyleLogin';
 import { Input } from '../../Components/Input/Input';
 import { useRouter } from 'expo-router';
+import { useAuthStore } from '../../store/authStore';
 
 const Login = () => {
   const router = useRouter();
-  const [user, setUser] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const {login, error} = useAuthStore();
     
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    try {
+      await login(email, password);
+      router.push("Home");
+    } catch (error) {
+      console.error(error);
+      console.error("Erro no cadastro:", error);
+    }
+    
+  };
+
+  const TelaCadastro = () => {
     router.push("Cadastro");
-    Alert.alert("Canastrão")
+    Alert.alert("Cadastro")
   };
-  const cad = () => {
-    router.push("Home");
-  };
+
   const merda = () =>{
     router.push("Esqueci");
   };
@@ -25,27 +37,32 @@ const Login = () => {
       <View style={styles.container}>
         <StatusBar barStyle="light-content"/>
         <View style={styles.logoContainer}>
-          <Image source={require('../../assets/logo.png')} style={styles.logo} />
+          <Image source={require('../../assets/logotext.png')} style={styles.logo} />
         </View>
         <Text style={styles.title}>Entre no seu perfil</Text>
 
         <View style={styles.inputContainer}>
 
-          <Input label="Usuário" icone="person-outline" placeholder="Digite seu email" onChangeText={setUser} value={user} />
+          <Input label="Usuário" icone="person-outline" placeholder="Digite seu email" onChangeText={setEmail} value={email} />
           <Input label="Senha" icone="lock-outline" placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password}/>
         </View>
         <TouchableOpacity onPress={merda}>
         <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
+        {error && <Text style={styles.error}>{error}</Text>}
         </TouchableOpacity>
         
 
-        <TouchableOpacity style={styles.button} onPress={cad}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Entrar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={() => router.push("Home")}>
+          <Text style={styles.buttonText}>Entrar sem login (APAGAR)</Text>
         </TouchableOpacity>
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Não tem conta?</Text>
-          <TouchableOpacity onPress={handleLogin}>
+          <TouchableOpacity onPress={TelaCadastro}>
           <Text style={styles.signupLink}>Criar</Text>
           </TouchableOpacity>
         </View>

@@ -17,14 +17,18 @@ import Dados from "./model/data.model.js";
  async function dataSend() {
     await connect();
 
+    const totalData = await Dados.countDocuments();  // Conta o total de usuários na base de dados
+    const newDataId = totalData + 1;  // Gera um ID único incrementando o total de usuários
+
     await Dados.create({
-        nitrogenio: "121",
-        fosforo: "672",
-        potassio: "40",
-        humidade: "5748",
-        temperatura: "2",
-        condutividade: "12",
-        pH: "090909",
+        id: newDataId,
+        nitrogenio: "02",
+        fosforo: "23",
+        potassio: "88",
+        umidade: "12",
+        temperatura: "36.2",
+        condutividade: "20",
+        pH: "6",
     })
  }
 

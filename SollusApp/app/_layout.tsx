@@ -17,7 +17,7 @@ export default function Layout() {
             <Stack.Screen name="Cadastro2/index"/>
             <Stack.Screen name="Esqueci/index"/>
             <Stack.Screen name="Home/index"/>
-
+            <Stack.Screen name="Relatorio"/>
         </Stack>
     );
 }

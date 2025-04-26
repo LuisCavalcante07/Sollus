@@ -39,6 +39,11 @@ const styles = StyleSheet.create({
       alignSelf: 'flex-start',
       marginLeft: '5%',
     },
+    error:{
+      color: "#E40606",
+      marginTop: 2,
+      fontWeight: 600,
+    },
     button: {
       width: '90%',
       height: 40,

@@ -1,26 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar, Image } from 'react-native';
 import styles from './StyleCadastro';
 import { Input } from '../../Components/Input/Input';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '../../styles';
+import { useAuthStore } from '../../store/authStore';
 
 const Cadastro = () => {
     const router = useRouter();
-    const [nome, setNome] = useState<string>('');
-    const [sobrenome, setSobrenome] = useState<string>('');
-    const [numero, setNumero] = useState<string>(''); // Alterado para string para evitar erro
+    const { signup, error, isLoading } = useAuthStore();
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [passwordc, setPasswordc] = useState<string>('');
 
-    const handleAvancar = () => {
-        if (!nome || !sobrenome || !numero) {
-            Alert.alert("Erro", "Todos os campos devem ser preenchidos");
+    const handleCadastro = async () => {
+    
+        if (password !== passwordc) {
+            Alert.alert("Erro", "As senhas não coincidem");
             return;
         }
 
-        // Passando os dados corretamente na URL
-        router.push(`/Cadastro2?nome=${encodeURIComponent(nome)}&sobrenome=${encodeURIComponent(sobrenome)}&numero=${encodeURIComponent(numero)}`);
+        router.push({
+            pathname: "Cadastro2",
+            params: {email, password, passwordc}
+        });
     };
+    
 
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -32,25 +38,25 @@ const Cadastro = () => {
                     size={39}
                     color={colors.StrongGreen}
                     style={{ position: 'absolute', top: 17, left: 25, marginTop: 50 }}
-                    onPress={() => router.push("Login")}
+                    onPress={() => router.push("Cadastro")}
                 />
 
-                <View style={styles.Maior}>
-                    <View style={styles.logoContainer}>
-                        <Image source={require('../../assets/logo.png')} style={styles.logo} />
-                        <Text style={styles.title}>Criar conta</Text>
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Input label="Nome" icone="person-outline" placeholder="Digite seu nome" onChangeText={setNome} value={nome} />
-                        <Input label="Sobrenome" icone="person-outline" placeholder="Digite seu sobrenome" onChangeText={setSobrenome} value={sobrenome} />
-                        <Input label="Número" icone="phone" placeholder="Digite seu número" onChangeText={setNumero} value={numero} />
-                    </View>
+                <View style={[styles.logoContainer, { marginTop: 80 }]}>
+                    <Image source={require('../../assets/logotext.png')} style={styles.logo} />
+                    <Text style={styles.title}>Criar conta</Text>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={handleAvancar}>
+                <View style={styles.inputContainer}>
+                    <Input label="Email" icone="mail-outline" placeholder="Digite seu email" onChangeText={setEmail} value={email} />
+                    <Input label="Senha" icone="lock-outline" placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password} />
+                    <Input label="Confirmar senha" icone="lock-outline" placeholder="Confirme sua senha" secureTextEntry={true} onChangeText={setPasswordc} value={passwordc} />
+                </View>
+
+                <TouchableOpacity style={styles.button} onPress={handleCadastro} disabled={isLoading}>
                     <Text style={styles.buttonText}>Avançar</Text>
                 </TouchableOpacity>
+
+                {error && <Text style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>{error}</Text>}
             </View>
         </TouchableWithoutFeedback>
     );
