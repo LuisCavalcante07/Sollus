@@ -4,10 +4,12 @@ import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js
 
 export const signup = async (req, res) => {
     const { email, password, name, lastname, phone, confirmPassword } = req.body;
+    console.log("Requisição recebida:", confirmPassword);
 
-    if(password !== confirmPassword){
-        return res.status(400).json({ success: false, message: "Passwords do not match" });
-    }
+    // if(password !== confirmPassword){
+    //     return res.status(400).json({ success: false, message: "Passwords do not match" });
+    // }
+    
     try {
         // Verifica se todos os campos foram preenchidos
         if (!email || !password) {

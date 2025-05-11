@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar, Image } from 'react-native';
-import styles from './StyleCadastro';
+import styles from '../../styles/StyleCadastro';
 import { Input } from '../../Components/Input/Input';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,18 +12,21 @@ const Cadastro = () => {
     const { signup, error, isLoading } = useAuthStore();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [passwordc, setPasswordc] = useState<string>('');
+    const [confirmpassword, setConfirmPassword] = useState<string>('');
+    const [passwordError, setPasswordError] = useState<string>('');
+    const [visiblePassword, setVisiblePassword] = useState<boolean>(false);
 
     const handleCadastro = async () => {
     
-        if (password !== passwordc) {
-            Alert.alert("Erro", "As senhas não coincidem");
+        if (password !== confirmpassword) {
+            setPasswordError("As senhas não coincidem");
             return;
         }
 
+        setPasswordError("");
         router.push({
             pathname: "Cadastro2",
-            params: {email, password, passwordc}
+            params: {email, password, confirmpassword}
         });
     };
     
@@ -38,7 +41,7 @@ const Cadastro = () => {
                     size={39}
                     color={colors.StrongGreen}
                     style={{ position: 'absolute', top: 17, left: 25, marginTop: 50 }}
-                    onPress={() => router.push("Cadastro")}
+                    onPress={() => router.push("Login")}
                 />
 
                 <View style={[styles.logoContainer, { marginTop: 80 }]}>
@@ -48,9 +51,13 @@ const Cadastro = () => {
 
                 <View style={styles.inputContainer}>
                     <Input label="Email" icone="mail-outline" placeholder="Digite seu email" onChangeText={setEmail} value={email} />
-                    <Input label="Senha" icone="lock-outline" placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password} />
-                    <Input label="Confirmar senha" icone="lock-outline" placeholder="Confirme sua senha" secureTextEntry={true} onChangeText={setPasswordc} value={passwordc} />
+                    <Input label="Senha" icone="lock-outline" isPassword={true} placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password}/>
+                    <Input label="Confirmar senha" icone="lock-outline" isPassword={true} placeholder="Digite novamente sua senha" secureTextEntry={true} onChangeText={setConfirmPassword} value={confirmpassword}/>
                 </View>
+
+                {passwordError !== '' && (
+                    <Text style={{ fontSize: 19, color: '#E40606', marginTop: 12}}>{passwordError}</Text>
+                )}
 
                 <TouchableOpacity style={styles.button} onPress={handleCadastro} disabled={isLoading}>
                     <Text style={styles.buttonText}>Avançar</Text>

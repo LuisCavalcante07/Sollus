@@ -9,7 +9,7 @@ import {
   Keyboard,
   StatusBar,
 } from 'react-native';
-import styles from './StylesEsqueci'; 
+import styles from '../../styles/StylesEsqueci'; 
 import { Input } from '../../Components/Input/Input'; 
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar, Image } from 'react-native';
-import styles from './StyleCadastro2';
+import styles from '../../styles/StyleCadastro2';
 import { Input } from '../../Components/Input/Input';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,7 +10,7 @@ import { useAuthStore } from '../../store/authStore';
 const Cadastro2 = () => { 
     const router = useRouter();
     const { signup, error, isLoading } = useAuthStore();
-    const {email, password, passwordc} = useLocalSearchParams();
+    const {email, password, confirmpassword} = useLocalSearchParams();
     const [name, setName] = useState<string>('');
     const [lastname, setLastname] = useState<string>('');
     const [phone, setPhone] = useState<string>(''); // Alterado para string para evitar erro
@@ -20,9 +20,9 @@ const Cadastro2 = () => {
             Alert.alert("Erro", "Todos os campos devem ser preenchidos");
             return;
         }
-        console.log(name, lastname, phone, email, password, passwordc);
+        console.log(name, lastname, phone, email, password, confirmpassword);
         try {
-            await signup(name, lastname, phone, email, password, passwordc)
+            await signup(name, lastname, phone, email, password, confirmpassword);
             Alert.alert("Sucesso", "Cadastro realizado com sucesso")
             router.push("Login");
         } catch (error) {

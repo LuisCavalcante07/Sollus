@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Text, View, Image, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar } from 'react-native';
-import styles from './StyleLogin';
+import styles from '../../styles/StyleLogin';
 import { Input } from '../../Components/Input/Input';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/authStore';
@@ -25,7 +25,6 @@ const Login = () => {
 
   const TelaCadastro = () => {
     router.push("Cadastro");
-    Alert.alert("Cadastro")
   };
 
   const merda = () =>{
@@ -44,7 +43,7 @@ const Login = () => {
         <View style={styles.inputContainer}>
 
           <Input label="Usuário" icone="person-outline" placeholder="Digite seu email" onChangeText={setEmail} value={email} />
-          <Input label="Senha" icone="lock-outline" placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password}/>
+          <Input label="Senha" icone="lock-outline" isPassword={true} placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password}/>
         </View>
         <TouchableOpacity onPress={merda}>
         <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
