@@ -1,78 +1,117 @@
-import { View, StyleSheet, TouchableOpacity, Text, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../../Components/Header";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import GraphParams from "../../Components/GraphParams";
-import { useState, useEffect } from "react";
-import { useDataStore } from "../../store/dataStore";
-import { useLocalSearchParams } from "expo-router";
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import GraphParams from '../../Components/GraphParams';
+import Header from '../../Components/Header';
+import { useDataStore } from '../../store/dataStore';
+import { useLocalSearchParams } from 'expo-router';
 
-export default function Grafico() {
-  const { fetchHistory } = useDataStore();
-  const parametros = ["Nitrogênio", "Fósforo", "Potássio", "Temperatura", "Condutividade", "Umidade", "pH"];
+const parametros = [
+  'Nitrogênio',
+  'Fósforo',
+  'Potássio',
+  'pH',
+  'Umidade',
+  'Condutividade',
+  'Temperatura',
+];
 
-  // Captura o parâmetro da URL
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+const GraficosScreen = () => {
+  const isLoadingHistory = useDataStore((state) => state.isLoadingHistory);
   const { param } = useLocalSearchParams();
 
-  // Definir o índice do gráfico a partir do parâmetro passado
-  const [currentGraph, setCurrentGraph] = useState<number>(
-    parametros.indexOf(param as string) !== -1 ? parametros.indexOf(param as string) : 0
-  );
+  const InitialIndex = parametros.indexOf(param as string);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    return InitialIndex >= 0 ? InitialIndex : 0;
+  });
 
   const nextGraph = () => {
-    if (currentGraph < parametros.length - 1) {
-      setCurrentGraph(currentGraph + 1);
-    }
+    setCurrentIndex((prev) => (prev + 1) % parametros.length);
   };
 
   const previousGraph = () => {
-    if (currentGraph > 0) {
-      setCurrentGraph(currentGraph - 1);
-    }
+    setCurrentIndex((prev) => (prev - 1 + parametros.length) % parametros.length);
   };
 
-  useEffect(() => {
-    fetchHistory();
-    setTimeout(() => {
-      console.log('DADOS ATUAIS DO HISTÓRICO:', useDataStore.getState().dados);
-    }, 2000);
-  }, []);
+  if (isLoadingHistory) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.loadingText}>Carregando gráficos...</Text>
+      </View>
+    );
+  }
+
+  const parametroAtual = parametros[currentIndex];
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title='Gráfico de Leituras' />
+      <Header title="Gráfico de Leituras" />
 
-      <View style={styles.containerMenu}>
+      <View style={styles.menuContainer}>
         <TouchableOpacity onPress={previousGraph}>
-          <AntDesign name="left" size={24} color="white" />
+          <AntDesign name="left" size={28} color="#fff" />
         </TouchableOpacity>
 
-        <Text style={styles.titleGrafico}>Gráfico de {parametros[currentGraph]}</Text>
+        <Text style={styles.titleGrafico}>Gráfico de {parametroAtual}</Text>
 
         <TouchableOpacity onPress={nextGraph}>
-          <AntDesign name="right" size={24} color="white" />
+          <AntDesign name="right" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
 
-      <GraphParams parametro={parametros[currentGraph]} />
+      <View style={styles.graphContainer}>
+        <GraphParams parametro={parametroAtual} />
+      </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0D141C',
-    alignItems: 'center',
+    paddingTop: 20,
   },
-  containerMenu: {
+  menuContainer: {
     flexDirection: 'row',
-    paddingTop: 50,
-    gap: 20,
-    alignItems: 'center', // Certificando-se que os itens fiquem alinhados
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   titleGrafico: {
-    color: 'white',
-    fontSize: 25,
-  }
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  graphContainer: {
+    width: SCREEN_WIDTH,
+    flex: 1,
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#0D141C',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#fff',
+    marginTop: 10,
+    fontSize: 16,
+  },
 });
+
+export default GraficosScreen;

@@ -3,7 +3,7 @@ import Medias from "../Service/OperationService.js";
 
 export const getAllData = async (req, res) => {
     try {
-        const dados = await Dados.find().sort({ ReadDate: -1 });
+        const dados = await Dados.find().sort({ ReadDate: -1 }).limit(50);
         res.status(200).json({ success: true, data: dados});
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -33,6 +33,45 @@ export const randomData = async (req, res) => {
         res.status(500).send({ success: false, message: error.message });
     }
 }
+
+export const putData = async (req, res) => {
+  try {
+    const {
+      nitrogenio,
+      fosforo,
+      potassio,
+      umidade,
+      temperatura,
+      condutividade,
+      pH
+    } = req.body;
+
+    const ultimoId = await Dados.findOne().sort({id: -1});
+    const novoId = ultimoId ? ultimoId.id + 1 : 1;
+
+    const novoDado = new Dados({
+      id: novoId,
+      nitrogenio,
+      fosforo,
+      potassio,
+      umidade,
+      temperatura,
+      condutividade,
+      pH,
+    });
+
+    const dadoSalvo = await novoDado.save();
+
+    res.status(201).json({
+      mensagem: "Dados inseridos com sucesso!",
+      dado: dadoSalvo
+    });
+  } catch (erro) {
+    console.error("Erro ao salvar os dados:", erro);
+    res.status(500).json({ erro: "Erro ao salvar os dados" });
+  }
+};
+
 
 export const deleteData = async (req, res) => {
     try{

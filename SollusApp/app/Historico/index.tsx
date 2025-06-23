@@ -6,7 +6,7 @@ import Header from '../../Components/Header';
 import { useDataStore } from '../../store/dataStore';
 
 const Historico = () => {
-  const { dados, fetchHistory, isLoading, deleteData } = useDataStore();
+  const { dados, fetchHistory, deleteData } = useDataStore();
 
   const DeleteHistorico = () => {
     Alert.alert(
@@ -37,7 +37,6 @@ const Historico = () => {
     <SafeAreaView style={styles.container}>
       <Header title='Historico das medições' />
 
-      {/* Container do botão de delete */}
       <View style={styles.containerDeleteBt}>
         <TouchableOpacity style={styles.deleteButton} onPress={DeleteHistorico}>
           <FontAwesome5 name="trash-alt" size={18} color="white" />

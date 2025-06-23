@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-const API_URI = "http://192.168.1.14:5000/api/data";
+const API_URI = "http://172.20.10.3:5000/api/data";
 
 interface Dados {
   id?: number;
@@ -21,6 +21,7 @@ interface DataState {
   dadosPorParametro: { [key: string]: { data: string; valor: number }[] };
   medias: { [key: string]: number }; 
   isLoading: boolean;
+  isLoadingHistory: boolean;
   error: string | null;
   fetchData: () => Promise<void>;
   sendData: () => Promise<void>;
@@ -35,6 +36,7 @@ export const useDataStore = create<DataState>((set) => ({
   dadosPorParametro: {},
   medias: {},
   isLoading: false,
+  isLoadingHistory: false,
   error: null,
 
   fetchData: async () => {
@@ -82,14 +84,12 @@ export const useDataStore = create<DataState>((set) => ({
   },
 
   fetchHistory: async () => {
-  set({ isLoading: true, error: null });
+  set({ isLoadingHistory: true, error: null });
   try {
     const response = await axios.get(`${API_URI}/history`);
     
-    // Ordenar os dados
-    const historicoOrdenado = response.data.data.sort((a: Dados, b: Dados) => b.id! - a.id!);
+    const historicoOrdenado = response.data.data.sort((a: Dados, b: Dados) => b.id! - a.id!).slice(0, 50);
     
-    // Organizar por parâmetro para os gráficos
     const dadosPorParametro: { [key: string]: { data: string; valor: number }[] } = {};
     
     historicoOrdenado.forEach((item: any) => {
@@ -106,18 +106,17 @@ export const useDataStore = create<DataState>((set) => ({
       parametros.forEach(({ key, nome }) => {
         if (!dadosPorParametro[nome]) dadosPorParametro[nome] = [];
         dadosPorParametro[nome].push({
-          data: item.data, // Ajuste conforme o nome do campo de data
+          data: item.data,
           valor: item[key],
         });
       });
     });
-
-    // Atualiza tanto o histórico completo quanto os dados organizados por parâmetro
-    set({ dados: historicoOrdenado, dadosPorParametro, isLoading: false });
+    
+    set({ dados: historicoOrdenado, dadosPorParametro, isLoadingHistory: false });
 
   } catch (error) {
     console.error("Erro ao buscar histórico:", error);
-    set({ error: "Erro ao buscar histórico", isLoading: false });
+    set({ error: "Erro ao buscar histórico", isLoadingHistory: false });
   }
   },
 

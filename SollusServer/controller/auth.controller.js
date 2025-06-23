@@ -3,107 +3,138 @@ import bcrypt from 'bcryptjs';
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 
 export const signup = async (req, res) => {
-    const { email, password, name, lastname, phone, confirmPassword } = req.body;
-    console.log("Requisição recebida:", confirmPassword);
+    const { email, password, name, lastname, phone, confirmpassword } = req.body;
 
-    // if(password !== confirmPassword){
-    //     return res.status(400).json({ success: false, message: "Passwords do not match" });
-    // }
-    
     try {
-        // Verifica se todos os campos foram preenchidos
         if (!email || !password) {
-            throw new Error("Fill all fields");
+            return res.status(400).json({ success: false, message: "Fill all fields" });
+        }
+        if (password !== confirmpassword) {
+            return res.status(400).json({ success: false, message: "Passwords do not match" });
         }
 
-        // Verifica se o email já está cadastrado
         const userAlreadyExists = await User.findOne({ email });
-        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-        
         if (userAlreadyExists) {
             return res.status(400).json({ success: false, message: "This user already exists" });
         }
 
-        // Gera a senha criptografada
         const hashedPassword = await bcrypt.hash(password, 10);
+        const totalUsers = await User.countDocuments();
+        const newUserId = totalUsers + 1;
 
-        // Gere um `userid` numérico baseado no número total de usuários
-        const totalUsers = await User.countDocuments();  // Conta o total de usuários na base de dados
-        const newUserId = totalUsers + 1;  // Gera um ID único incrementando o total de usuários
-
-        // Cria um novo usuário com os dados recebidos
         const user = new User({
-            userid: newUserId,  // Gera um ID único para o usuário
+            userid: newUserId,
             email,
             password: hashedPassword,
             name,
             lastname,
             phone,
-            verificationToken,
-            verificationTokenExpires: Date.now() + 24 * 60 * 60 * 1000  // 24 horas
+            verificationToken: Math.floor(100000 + Math.random() * 900000).toString(),
+            verificationTokenExpires: Date.now() + 24 * 60 * 60 * 1000,
         });
 
-        // Salva o usuário no banco de dados
         await user.save();
 
-        // Gera o token JWT e configura o cookie
-        generateTokenAndSetCookie(res, user._id);
+        const token = generateTokenAndSetCookie(res, user._id);
+
         res.status(201).json({
             success: true,
             message: "User created",
             user: {
                 ...user._doc,
-                password: undefined  // Não envia a senha no retorno
-            }
+                password: undefined,
+            },
+            token,
         });
     } catch (error) {
-        // Retorna erro caso algum problema aconteça
         res.status(400).json({ success: false, message: error.message });
     }
 };
 
 export const login = async (req, res) => {
-    const {email, password} = req.body
-
     try {
-        const user = await User.findOne({email});
-        if(!email){
-            return res.status(400).json({success: false, message:"Invalid email"});
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "Usuário não encontrado" });
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({success: false, message:"Invalid password"});
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Senha incorreta" });
         }
-        generateTokenAndSetCookie(res, user._id);
-        user.lastlogin = new Date();
-        await user.save();      
+
+        const token = generateTokenAndSetCookie(res, user._id);
 
         res.status(200).json({
-            success: true,
-            message: "logged",
-            user: {
-                ...user._doc,
-                password: undefined,
-            },
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            token,
         });
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        console.error("Erro no login:", error.message);
+        res.status(500).json({ message: "Erro no servidor" });
     }
 };
 
 export const logout = async (req, res) => {
-    res.clearCookie("token");
-    res.status(200).json({success: true, message: "Logout successfully"});
-
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict"
+    });
+    res.status(200).json({ success: true, message: "Logout successfully" });
 };
 
 export const forgotPassword = async (req, res) => {
-    const {email} = req.body;
-    
+    const { email } = req.body;
     try {
-        const user = await User.findOne({email});
-        
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        res.status(200).json({ success: true, message: "Password reset link sent" });
     } catch (error) {
-        
+        res.status(500).json({ success: false, message: error.message });
     }
-}
+};
+
+export const profileChange = async (req, res) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true }).select("-password");
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({ success: true, message: "User updated", user: updatedUser });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const viewProfile = async (req, res) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+        const user = await User.findById(userId).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        const { name, lastname, email, phone } = user;
+        return res.status(200).json({ name, lastname, email, phone });
+    } catch (error) {
+        console.error("Erro ao buscar perfil", error.message);
+        return res.status(500).json({ message: 'Erro ao buscar perfil do usuário', error: error.message });
+    }
+};

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity, SafeAreaView, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import { useDataStore } from '../../store/dataStore';
 
 const { width, height } = Dimensions.get('window');
@@ -11,14 +11,19 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
+
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const data = [
-  { name: 'Nitrogênio', icon: require('../../assets/nitrogen.png'), unit: 'g/kg', value: ultimaLeitura?.nitrogenio },
-  { name: 'Fósforo', icon: require('../../assets/Fosforo.png'), unit: 'mg/dm³', value: ultimaLeitura?.fosforo },
-  { name: 'Potássio', icon: require('../../assets/Potassio.png'), unit: 'mg/dm³', value: ultimaLeitura?.potassio },
+  { name: 'Nitrogênio', icon: require('../../assets/nitrogen.png'), unit: 'PPM', value: ultimaLeitura?.nitrogenio },
+  { name: 'Fósforo', icon: require('../../assets/Fosforo.png'), unit: 'PPM', value: ultimaLeitura?.fosforo },
+  { name: 'Potássio', icon: require('../../assets/Potassio.png'), unit: 'PPM', value: ultimaLeitura?.potassio },
   { name: 'Temperatura', icon: require('../../assets/Temperature.png'), unit: '°C', value: ultimaLeitura?.temperatura },
-  { name: 'Condutividade', icon: require('../../assets/Condutividade.png'), unit: 'dS/m', value: ultimaLeitura?.condutividade },
+  { name: 'Condutividade', icon: require('../../assets/Condutividade.png'), unit: 'uS/m', value: ultimaLeitura?.condutividade },
   { name: 'Umidade', icon: require('../../assets/Umidade.png'), unit: '%', value: ultimaLeitura?.umidade },
   { name: 'pH', icon: require('../../assets/pH.png'), unit: '', value: ultimaLeitura?.pH },
   ];
@@ -27,7 +32,7 @@ const Home = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#21242D" />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push('Login')}>
+        <TouchableOpacity onPress={() => router.push('Perfil')}>
         <Image source={require('../../assets/Person.png')} style={styles.person} />
         </TouchableOpacity>
         <View style={styles.viewBem}>
@@ -112,12 +117,12 @@ const Home = () => {
 
         </View>
       </View>
-
+{/* 
       <TouchableOpacity style={styles.btn} activeOpacity={0.7} onPress={sendData}>
         <View style={styles.bola}>
           <Text style={styles.btnText}>{isLoading ? 'Enviando...' : 'Enviar Dados Aleatórios'}</Text>
         </View>
-      </TouchableOpacity> 
+      </TouchableOpacity>  */}
 
     </SafeAreaView>
   );

@@ -9,10 +9,14 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const[isNavigating, setIsNavigating] = useState(false);
 
   const {login, error} = useAuthStore();
     
   const handleLogin = async () => {
+    if(isNavigating) return;
+    setIsNavigating(true);
+
     try {
       await login(email, password);
       router.push("Home");

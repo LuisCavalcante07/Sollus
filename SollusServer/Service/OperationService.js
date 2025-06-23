@@ -7,7 +7,7 @@ const Medias  = async () =>{
             $group: {
                 _id: null,
                 MediaNitrogenio: { $avg: "$nitrogenio"},
-                MediaFosfoto: { $avg: "$fosforo"},
+                MediaFosforo: { $avg: "$fosforo"},
                 MediaPotassio: { $avg: "$potassio"},
                 MediaUmidade: { $avg: "$umidade"},
                 MediaTemperatura: { $avg: "$temperatura"},

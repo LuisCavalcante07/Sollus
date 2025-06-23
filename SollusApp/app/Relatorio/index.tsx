@@ -17,7 +17,8 @@ const White = '#FFFEFF';
 const ShadowColor = '#000';
 
 const Relatorio = () => {
-    const { fetchMedia, medias } = useDataStore();
+    // const { fetchMedia, medias } = useDataStore();
+    const store = useDataStore;
 
     // const fetchMedia = useDataStore((state) => state.fetchData);
     // const medias = useDataStore((state) => state.medias);
@@ -40,7 +41,6 @@ const Relatorio = () => {
         ]).start();
     };
 
-        const store = useDataStore;
 
     const aoPressionarBotao = async () => {
         animateButton();
@@ -58,7 +58,7 @@ const Relatorio = () => {
 
          const dados: { [key: string]: string } = {
             Nitrogênio: `${medias?.MediaNitrogenio?.toFixed(2) ?? 'N/A'} g/kg`,
-            Fósforo: `${medias?.MediaFosfoto?.toFixed(2) ?? 'N/A'} mg/dm³`,
+            Fósforo: `${medias?.MediaFosforo?.toFixed(2) ?? 'N/A'} mg/dm³`,
             Potássio: `${medias?.MediaPotassio?.toFixed(2) ?? 'N/A'} mg/dm³`,
             pH: `${medias?.MediaPH?.toFixed(2) ?? 'N/A'}`,
             Umidade: `${medias?.MediaUmidade?.toFixed(2) ?? 'N/A'}%`,

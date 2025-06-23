@@ -23,6 +23,8 @@ export default function Layout() {
             <Stack.Screen name="Grafico/index"/>
             <Stack.Screen name="Sugestoes/index"/>
             <Stack.Screen name="Tutorial/index"/>
+            <Stack.Screen name='Perfil/index'/>
+            <Stack.Screen name='AlterarPerfil/index'/>
         </Stack>
     );
 }
