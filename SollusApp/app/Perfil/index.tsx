@@ -25,34 +25,16 @@ const Perfil = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [zoomVisible, setZoomVisible] = useState(false);
   const [signOutModalVisible, setSignOutModalVisible] = useState(false);
-  const [profileImage, setProfileImage] = useState(require('../../assets/Person2.png'));
 
-  const { user, viewPerfil, logout, uploadFotoPerfil } = useAuthStore();
+  const { user, viewPerfil, logout, uploadProfilePhoto } = useAuthStore();
 
   const scaleValue = useRef(new Animated.Value(1)).current;
   const modalAnim = useRef(new Animated.Value(0)).current;
   const signOutModalAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const uri = await AsyncStorage.getItem('@profile_image');
-        if (uri) setProfileImage({ uri });
-        await viewPerfil();
-      } catch (error) {
-        console.log('Erro ao carregar dados do perfil:', error);
-      }
-    }
-    loadData();
+    viewPerfil();
   }, []);
-
-  const salvarImagem = async (uri: string) => {
-    try {
-      await AsyncStorage.setItem('@profile_image', uri);
-    } catch (error) {
-      console.log('Erro ao salvar imagem:', error);
-    }
-  };
 
   const animateScale = (toValue: number) => {
     Animated.spring(scaleValue, {
@@ -97,31 +79,32 @@ const Perfil = () => {
     }).start(() => setSignOutModalVisible(false));
   };
 
+  const handleImageResult = async (result: ImagePicker.ImagePickerResult) => {
+    if (!result.canceled && result.assets?.length) {
+      const uri = result.assets[0].uri;
+      try {
+        await uploadProfilePhoto(uri); 
+        await viewPerfil();             
+        closeEditModal();
+      } catch {
+        Alert.alert('Erro', 'Não foi possível enviar a foto ao servidor.');
+      }
+    }
+  };
+
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permissão necessária', 'Precisamos de permissão para acessar suas fotos!');
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-
-    if (!result.canceled && result.assets?.length) {
-      const uri = result.assets[0].uri;
-      setProfileImage({ uri });
-      await salvarImagem(uri);
-      try {
-        await uploadFotoPerfil(uri);
-      } catch {
-        Alert.alert('Erro', 'Não foi possível enviar a foto ao servidor.');
-      }
-      closeEditModal();
-    }
+    await handleImageResult(result);
   };
 
   const takePhoto = async () => {
@@ -130,24 +113,12 @@ const Perfil = () => {
       Alert.alert('Permissão necessária', 'Precisamos de permissão para usar sua câmera!');
       return;
     }
-
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-
-    if (!result.canceled && result.assets?.length) {
-      const uri = result.assets[0].uri;
-      setProfileImage({ uri });
-      await salvarImagem(uri);
-      try {
-        await uploadFotoPerfil(uri);
-      } catch {
-        Alert.alert('Erro', 'Não foi possível enviar a foto ao servidor.');
-      }
-      closeEditModal();
-    }
+    await handleImageResult(result);
   };
 
   const modalTranslateY = modalAnim.interpolate({
@@ -159,6 +130,10 @@ const Perfil = () => {
     inputRange: [0, 1],
     outputRange: [Dimensions.get('window').height, 0],
   });
+
+  const fotoPerfilSource = user?.photoUrl
+    ? { uri: user.photoUrl }
+    : require('../../assets/Person2.png');
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -174,7 +149,7 @@ const Perfil = () => {
         >
           <Animated.View style={[styles.Foto, { transform: [{ scale: scaleValue }] }]}>
             <View style={styles.wrapperFoto}>
-              <Image source={profileImage} style={styles.imagemPerfil} />
+              <Image source={fotoPerfilSource} style={styles.imagemPerfil} />
               <TouchableOpacity style={styles.botaoEditar} onPress={openEditModal}>
                 <Feather name="edit-2" size={18} color="#0D141C" />
               </TouchableOpacity>
@@ -183,8 +158,7 @@ const Perfil = () => {
         </TouchableOpacity>
 
         <View style={styles.info}>
-          {[
-            { icon: <Feather name="user" size={24} color="#00B15E" />, label: 'Nome:', value: user?.name || 'Não informado' },
+          {[{ icon: <Feather name="user" size={24} color="#00B15E" />, label: 'Nome:', value: user?.name || 'Não informado' },
             { icon: <Feather name="user" size={24} color="#00B15E" />, label: 'Sobrenome:', value: user?.lastname || 'Não informado' },
             { icon: <Fontisto name="email" size={24} color="#00B15E" />, label: 'Email:', value: user?.email || 'Não informado' },
             { icon: <Feather name="phone" size={24} color="#00B15E" />, label: 'Telefone:', value: user?.phone || 'Não informado' },
@@ -209,7 +183,7 @@ const Perfil = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Modal para editar foto */}
+        {/* Modal editar foto */}
         <Modal transparent visible={modalVisible} animationType="none" onRequestClose={closeEditModal}>
           <View style={styles.modalContainer}>
             <Animated.View style={[styles.modalContent, { transform: [{ translateY: modalTranslateY }] }]}>
@@ -233,7 +207,7 @@ const Perfil = () => {
           </View>
         </Modal>
 
-        {/* Modal para confirmar logout */}
+        {/* Modal confirmar logout */}
         <Modal transparent visible={signOutModalVisible} animationType="none" onRequestClose={closeSignOutModal}>
           <View style={styles.modalContainer}>
             <Animated.View style={[styles.modalContent, { transform: [{ translateY: signOutModalTranslateY }] }]}>
@@ -257,7 +231,8 @@ const Perfil = () => {
             </Animated.View>
           </View>
         </Modal>
-        
+
+        {/* Modal zoom imagem */}
         <Modal visible={zoomVisible} transparent animationType="fade">
           <TouchableOpacity
             style={styles.zoomOverlay}
@@ -265,7 +240,7 @@ const Perfil = () => {
             activeOpacity={1}
           >
             <View style={styles.zoomContent}>
-              <Image source={profileImage} style={styles.zoomedImage} resizeMode="contain" />
+              <Image source={fotoPerfilSource} style={styles.zoomedImage} resizeMode="contain" />
             </View>
           </TouchableOpacity>
         </Modal>

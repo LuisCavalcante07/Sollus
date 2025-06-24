@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
   dados: {
     padding: width * 0.05,
     alignItems: 'center',
-    width: width * 0.8,
-    height: height * 0.6,
+    width: width * 0.75,
+    height: height * 0.65,
     borderRadius: width * 0.05,
     backgroundColor: '#21242D',
     shadowColor: '#000',
@@ -145,11 +145,12 @@ const styles = StyleSheet.create({
 
   unidade: {
     color: '#00B15E',
-    fontSize: width * 0.035,
+    fontSize: Platform.OS === 'web' ? 12 : width * 0.035,
   },
 
   dataName: {
     flex: 1,
+    fontSize: Platform.OS === 'web' ? 12 : width * 0.035,
   },
 
   sugestaoIcon: {

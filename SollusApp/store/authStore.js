@@ -3,7 +3,7 @@ import axios from "axios";
 import { Platform } from "react-native"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URI = "http://172.20.10.3:5000/api/auth";
+const API_URI = "http://192.168.1.17:5000/api/auth";
 axios.defaults.withCredentials = true;
 
 const storage = {

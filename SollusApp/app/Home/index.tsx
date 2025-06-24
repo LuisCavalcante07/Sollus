@@ -31,11 +31,11 @@ const Home = () => {
   }, [fetchData]);
 
   const data = [
-    { name: 'Nitrogênio', icon: require('../../assets/nitrogen.png'), unit: 'PPM', value: ultimaLeitura?.nitrogenio },
-    { name: 'Fósforo', icon: require('../../assets/Fosforo.png'), unit: 'PPM', value: ultimaLeitura?.fosforo },
-    { name: 'Potássio', icon: require('../../assets/Potassio.png'), unit: 'PPM', value: ultimaLeitura?.potassio },
+    { name: 'Nitrogênio', icon: require('../../assets/nitrogen.png'), unit: 'g/kg', value: ultimaLeitura?.nitrogenio },
+    { name: 'Fósforo', icon: require('../../assets/Fosforo.png'), unit: 'mg/dm³', value: ultimaLeitura?.fosforo },
+    { name: 'Potássio', icon: require('../../assets/Potassio.png'), unit: 'mg/dm³', value: ultimaLeitura?.potassio },
     { name: 'Temperatura', icon: require('../../assets/Temperature.png'), unit: '°C', value: ultimaLeitura?.temperatura },
-    { name: 'Condutividade', icon: require('../../assets/Condutividade.png'), unit: 'uS/m', value: ultimaLeitura?.condutividade },
+    { name: 'Condutividade', icon: require('../../assets/Condutividade.png'), unit: 'dS/m', value: ultimaLeitura?.condutividade },
     { name: 'Umidade', icon: require('../../assets/Umidade.png'), unit: '%', value: ultimaLeitura?.umidade },
     { name: 'pH', icon: require('../../assets/pH.png'), unit: '', value: ultimaLeitura?.pH },
   ];
@@ -72,7 +72,9 @@ const Home = () => {
       </View>
 
       <View style={styles.viewMaior}>
+        
         <View style={styles.dados}>
+
           <View style={styles.dadosRecentes}>
             <Text style={styles.textDadosRecentes}>Dados Recentes</Text>
             <Image source={require('../../assets/Dados.png')} style={styles.imgdados} />

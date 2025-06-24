@@ -102,8 +102,9 @@ const styles = StyleSheet.create({
   },
   botoes: {
     flexDirection: 'row',
-    position: 'absolute',
-    bottom: height * 0.08,
+    justifyContent: 'space-between',
+    marginTop: height * 0.05,
+    width: '90%',
     alignSelf: 'center',
   },
   Sair: {

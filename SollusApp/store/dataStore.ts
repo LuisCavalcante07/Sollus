@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-const API_URI = "http://172.20.10.3:5000/api/data";
+const API_URI = "http://192.168.1.17:5000/api/data";
 
 interface Dados {
   id?: number;
@@ -84,40 +84,40 @@ export const useDataStore = create<DataState>((set) => ({
   },
 
   fetchHistory: async () => {
-  set({ isLoadingHistory: true, error: null });
-  try {
-    const response = await axios.get(`${API_URI}/history`);
-    
-    const historicoOrdenado = response.data.data.sort((a: Dados, b: Dados) => b.id! - a.id!).slice(0, 50);
-    
-    const dadosPorParametro: { [key: string]: { data: string; valor: number }[] } = {};
-    
-    historicoOrdenado.forEach((item: any) => {
-      const parametros = [
-        { key: 'nitrogenio', nome: 'Nitrogênio' },
-        { key: 'fosforo', nome: 'Fósforo' },
-        { key: 'potassio', nome: 'Potássio' },
-        { key: 'temperatura', nome: 'Temperatura' },
-        { key: 'condutividade', nome: 'Condutividade' },
-        { key: 'umidade', nome: 'Umidade' },
-        { key: 'pH', nome: 'pH' }
-      ];
-
-      parametros.forEach(({ key, nome }) => {
-        if (!dadosPorParametro[nome]) dadosPorParametro[nome] = [];
-        dadosPorParametro[nome].push({
-          data: item.data,
-          valor: item[key],
+    set({ isLoadingHistory: true, error: null });
+    try {
+      const response = await axios.get(`${API_URI}/history`);
+      
+      const historicoOrdenado = response.data.data.sort((a: Dados, b: Dados) => b.id! - a.id!).slice(0, 50);
+      
+      const dadosPorParametro: { [key: string]: { data: string; valor: number }[] } = {};
+      
+      historicoOrdenado.forEach((item: any) => {
+        const parametros = [
+          { key: 'nitrogenio', nome: 'Nitrogênio' },
+          { key: 'fosforo', nome: 'Fósforo' },
+          { key: 'potassio', nome: 'Potássio' },
+          { key: 'temperatura', nome: 'Temperatura' },
+          { key: 'condutividade', nome: 'Condutividade' },
+          { key: 'umidade', nome: 'Umidade' },
+          { key: 'pH', nome: 'pH' }
+        ];
+      
+        parametros.forEach(({ key, nome }) => {
+          if (!dadosPorParametro[nome]) dadosPorParametro[nome] = [];
+          dadosPorParametro[nome].push({
+            data: item.data,
+            valor: item[key],
+          });
         });
       });
-    });
+      
+      set({ dados: historicoOrdenado, dadosPorParametro, isLoadingHistory: false });
     
-    set({ dados: historicoOrdenado, dadosPorParametro, isLoadingHistory: false });
-
-  } catch (error) {
-    console.error("Erro ao buscar histórico:", error);
-    set({ error: "Erro ao buscar histórico", isLoadingHistory: false });
-  }
+    } catch (error) {
+      console.error("Erro ao buscar histórico:", error);
+      set({ error: "Erro ao buscar histórico", isLoadingHistory: false });
+    }
   },
 
   deleteData: async () => {

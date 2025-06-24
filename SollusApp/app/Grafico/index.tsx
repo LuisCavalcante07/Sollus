@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -25,7 +25,6 @@ const parametros = [
   'Temperatura',
 ];
 
-// Container que usa SafeAreaView apenas no iOS para evitar problemas de layout em Android
 const Container: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   Platform.OS === 'ios' ? (
     <SafeAreaView style={styles.safeArea}>{children}</SafeAreaView>
@@ -34,12 +33,15 @@ const Container: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   );
 
 const GraficosScreen = () => {
-  const isLoadingHistory = useDataStore((state) => state.isLoadingHistory);
+  const { isLoadingHistory, fetchHistory} = useDataStore();
   const { param } = useLocalSearchParams();
 
-  // Define o índice inicial baseado no parâmetro recebido, se válido
   const initialIndex = parametros.indexOf(param as string);
   const [currentIndex, setCurrentIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
+
+  useEffect(()=> {
+    fetchHistory();
+  }, [fetchHistory])
 
   const nextGraph = () => setCurrentIndex((prev) => (prev + 1) % parametros.length);
 

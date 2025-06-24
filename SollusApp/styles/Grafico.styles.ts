@@ -28,7 +28,7 @@ export default StyleSheet.create({
     marginLeft: 20,
   },
   titleGrafico: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },

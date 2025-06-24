@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  View, Text, Image, Dimensions, TouchableOpacity, SafeAreaView, Modal,
+  View, Text, Image, TouchableOpacity, SafeAreaView, Modal,
   Animated, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert, StatusBar
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -11,9 +11,11 @@ import { useAuthStore } from '../../store/authStore';
 import { router } from 'expo-router';
 import styles from '../../styles/AterarPerfil.styles';
 import { useWindowDimensions } from 'react-native';
+import ConfirmChanges from '../../Components/ConfirmChanges';
 
 const MudarPerfil = () => {
   const [nome, setNome] = useState('');
+  const [showConfirmChanges, setShowConfirmChanges] = useState(false);
   const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -59,7 +61,7 @@ const MudarPerfil = () => {
         const uri = URL.createObjectURL(file);
         setProfileImage({ uri });
         await salvarImagem(uri);
-        closeEditModal();
+        setModalVisible(false);
       }
     };
     input.click();
@@ -81,7 +83,7 @@ const MudarPerfil = () => {
       } catch {
         Alert.alert('Erro', 'Não foi possível enviar a foto.');
       }
-      closeEditModal();
+      setModalVisible(false);
     }
   };
 
@@ -100,7 +102,7 @@ const MudarPerfil = () => {
       } catch {
         Alert.alert('Erro', 'Falha ao enviar foto.');
       }
-      closeEditModal();
+      setModalVisible(false);
     }
   };
 
@@ -108,6 +110,7 @@ const MudarPerfil = () => {
     try {
       await userUpdate(nome, sobrenome, email, telefone);
       Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
+      router.push("/Perfil")
     } catch (err) {
       console.error(err);
       Alert.alert('Erro', 'Erro ao atualizar dados.');
@@ -129,6 +132,7 @@ const MudarPerfil = () => {
         style={{ flex: 1 }}
       >
         <ScrollView
+          style={{ flex: 1 }}
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps="handled"
         >
@@ -165,7 +169,7 @@ const MudarPerfil = () => {
                 <TextInput
                   style={styles.input}
                   placeholder={placeholder}
-                  placeholderTextColor="#888"
+                  placeholderTextColor="#FFF"
                   value={value}
                   onChangeText={set}
                   keyboardType={keyboardType}
@@ -183,7 +187,7 @@ const MudarPerfil = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Modais */}
+          {/* Modal de foto */}
           <Modal transparent visible={modalVisible} animationType="none">
             <View style={styles.modalContainer}>
               <Animated.View style={[styles.modalContent, { transform: [{ translateY: modalTranslateY }] }]}>
@@ -203,6 +207,7 @@ const MudarPerfil = () => {
             </View>
           </Modal>
 
+          {/* Modal zoom */}
           <Modal visible={zoomVisible} transparent animationType="fade">
             <TouchableOpacity style={styles.zoomOverlay} onPress={() => setZoomVisible(false)}>
               <View style={styles.zoomContent}>
@@ -217,7 +222,3 @@ const MudarPerfil = () => {
 };
 
 export default MudarPerfil;
-
-function closeEditModal() {
-    throw new Error('Function not implemented.');
-}
