@@ -13,28 +13,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ellipseIcon: {
-    width: 208, // Definir largura fixa para o círculo
-    height: 208, // Definir altura fixa para o círculo
-    borderRadius: 104, // Metade da largura/altura para criar um círculo perfeito
+    width: 208, 
+    height: 208, 
+    borderRadius: 104, 
     backgroundColor: '#00B15E',
     alignItems: 'center',
     justifyContent: 'center',
   },
   svgPosition: {
-    position: 'absolute', // Posicionar o SVG sobre a imagem
+    position: 'absolute', 
     alignItems: 'center',
     justifyContent: 'center',
   },
   senha:{
     fontSize: 40,
-fontFamily: "Roboto-Regular",
-color: "#fff",
-textAlign: "left",
-width: 303,
-height: 144,
-marginTop:72,
-alignItems:'center',
-justifyContent:'center'
+    fontFamily: "Roboto-Regular",
+    color: "#fff",
+    textAlign: "left",
+    width: 303,
+    height: 144,
+    marginTop:72,
+    alignItems:'center',
+    justifyContent:'center'
   }
 });
 export default styles;

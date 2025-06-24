@@ -10,6 +10,7 @@ const UserSchema = new mongoose.Schema({
     lastlogin: { type: Date, default: Date.now },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: Date, default: null },
+    photoUrl: {type: String, default: ''}
 
 }, { timestamps: true });
 

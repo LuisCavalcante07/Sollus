@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Text, View, Image, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar } from 'react-native';
-import styles from '../../styles/StyleLogin';
+import styles from '../../styles/Login.styles';
 import { Input } from '../../Components/Input/Input';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/authStore';

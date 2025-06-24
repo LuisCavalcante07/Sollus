@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, JSX } from 'react';
 import {
     View, StyleSheet, Text, Image, Dimensions,
@@ -21,37 +20,35 @@ const Perfil = () => {
     const [signOutModalVisible, setSignOutModalVisible] = useState(false);
     const [profileImage, setProfileImage] = useState(require('../../assets/Person2.png'));
 
-    const {user, viewPerfil, logout} = useAuthStore();
+    const { user, viewPerfil, logout, uploadFotoPerfil } = useAuthStore();
 
     const scaleValue = useRef(new Animated.Value(1)).current;
     const modalAnim = useRef(new Animated.Value(0)).current;
     const signOutModalAnim = useRef(new Animated.Value(0)).current;
 
-    
     useEffect(() => {
-    const loadProfileImage = async () => {
-        try {
-            const uri = await AsyncStorage.getItem('@profile_image');
-            if (uri) {
-                setProfileImage({ uri });
+        const loadProfileImage = async () => {
+            try {
+                const uri = await AsyncStorage.getItem('@profile_image');
+                if (uri) {
+                    setProfileImage({ uri });
+                }
+            } catch (error) {
+                console.log('Erro ao carregar imagem:', error);
             }
-        } catch (error) {
-            console.log('Erro ao carregar imagem:', error);
-        }
-    };
+        };
 
-    const fetchUserData = async () => {
-        try {
-            await viewPerfil();
-        } catch (error) {
-            console.log('Erro ao buscar dados do usuário:', error);
-        }
-    };
+        const fetchUserData = async () => {
+            try {
+                await viewPerfil();
+            } catch (error) {
+                console.log('Erro ao buscar dados do usuário:', error);
+            }
+        };
 
-    loadProfileImage();
-    fetchUserData();
-}, []); 
-
+        loadProfileImage();
+        fetchUserData();
+    }, []);
 
     const salvarImagem = async (uri: string) => {
         try {
@@ -129,6 +126,12 @@ const Perfil = () => {
             const uri = result.assets[0].uri;
             setProfileImage({ uri });
             await salvarImagem(uri);
+            // Chamada para enviar a foto ao backend via store
+            try {
+                await uploadFotoPerfil(uri);
+            } catch (error) {
+                Alert.alert("Erro", "Não foi possível enviar a foto ao servidor.");
+            }
             closeEditModal();
         }
     };
@@ -150,6 +153,12 @@ const Perfil = () => {
             const uri = result.assets[0].uri;
             setProfileImage({ uri });
             await salvarImagem(uri);
+            // Chamada para enviar a foto ao backend via store
+            try {
+                await uploadFotoPerfil(uri);
+            } catch (error) {
+                Alert.alert("Erro", "Não foi possível enviar a foto ao servidor.");
+            }
             closeEditModal();
         }
     };
@@ -164,16 +173,13 @@ const Perfil = () => {
         outputRange: [height, 0],
     });
 
-
-
     return (
         <SafeAreaView style={styles.safeArea}>
             <StatusBar backgroundColor="#21242D" barStyle="light-content" />
             <View style={styles.container}>
 
-                
-                <Header title="Perfil do Usuário"/>
-                
+                <Header title="Perfil do Usuário" />
+
                 <TouchableOpacity
                     onPress={() => setZoomVisible(true)}
                     activeOpacity={0.9}
@@ -190,29 +196,27 @@ const Perfil = () => {
                     </Animated.View>
                 </TouchableOpacity>
 
-              
-              
                 <View style={styles.info}>
-    {[
-        { icon: <Feather name="user" size={24} color="#00B15E" />, label: 'Nome:', value: user?.name || '' },
-        { icon: <Feather name="user" size={24} color="#00B15E" />, label: 'Sobrenome:', value: user?.lastname || '' },
-        { icon: <Fontisto name="email" size={24} color="#00B15E" />, label: 'Email:', value: user?.email || '' },
-        { icon: <Feather name="phone" size={24} color="#00B15E" />, label: 'Telefone:', value: user?.phone || '' },
-    ].map((item, index) => (
-        <View key={index} style={styles.infoItem}>
-            <View style={styles.Icon}>
-                {item.icon}
-            </View>
+                    {[
+                        { icon: <Feather name="user" size={24} color="#00B15E" />, label: 'Nome:', value: user?.name || '' },
+                        { icon: <Feather name="user" size={24} color="#00B15E" />, label: 'Sobrenome:', value: user?.lastname || '' },
+                        { icon: <Fontisto name="email" size={24} color="#00B15E" />, label: 'Email:', value: user?.email || '' },
+                        { icon: <Feather name="phone" size={24} color="#00B15E" />, label: 'Telefone:', value: user?.phone || '' },
+                    ].map((item, index) => (
+                        <View key={index} style={styles.infoItem}>
+                            <View style={styles.Icon}>
+                                {item.icon}
+                            </View>
 
-            <View>
-                <Text style={styles.InfoNome}>{item.label}</Text>
-                <Text style={{ color: '#FFF', fontSize: 16 }}>
-                    {item.value ? item.value : 'Não informado'}
-                </Text>
-            </View>
-        </View>
-    ))}
-</View>
+                            <View>
+                                <Text style={styles.InfoNome}>{item.label}</Text>
+                                <Text style={{ color: '#FFF', fontSize: 16 }}>
+                                    {item.value ? item.value : 'Não informado'}
+                                </Text>
+                            </View>
+                        </View>
+                    ))}
+                </View>
                 <View style={styles.botoes}>
                     <TouchableOpacity
                         style={styles.Sair}
@@ -231,7 +235,6 @@ const Perfil = () => {
                     </TouchableOpacity>
                 </View>
 
-             
                 <Modal transparent visible={modalVisible} animationType="none" onRequestClose={closeEditModal}>
                     <View style={styles.modalContainer}>
                         <Animated.View style={[styles.modalContent, { transform: [{ translateY: modalTranslateY }] }]}>
@@ -252,20 +255,18 @@ const Perfil = () => {
                     </View>
                 </Modal>
 
-              
                 <Modal transparent visible={signOutModalVisible} animationType="none" onRequestClose={closeSignOutModal}>
                     <View style={styles.modalContainer}>
                         <Animated.View style={[styles.modalContent, { transform: [{ translateY: signOutModalTranslateY }] }]}>
-
                             <Text style={styles.modalTitle}>Sair da sua conta?</Text>
 
-                            <TouchableOpacity 
-                            style={styles.modalButton} 
-                            onPress={async () => {
-                                await logout();
-                                closeSignOutModal();
-                                router.push('/Login');
-                            }}
+                            <TouchableOpacity
+                                style={styles.modalButton}
+                                onPress={async () => {
+                                    await logout();
+                                    closeSignOutModal();
+                                    router.push('/Login');
+                                }}
                             >
                                 <Text style={styles.modalButtonText}>Sair</Text>
                             </TouchableOpacity>
@@ -280,7 +281,6 @@ const Perfil = () => {
                     </View>
                 </Modal>
 
-               
                 <Modal visible={zoomVisible} transparent animationType="fade">
                     <TouchableOpacity style={styles.zoomOverlay} onPress={() => setZoomVisible(false)} activeOpacity={1}>
                         <View style={styles.zoomContent}>
@@ -294,10 +294,8 @@ const Perfil = () => {
                 </Modal>
             </View>
         </SafeAreaView>
-
     );
 };
-
 
 const styles = StyleSheet.create({
     safeArea: {

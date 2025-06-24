@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar, Image } from 'react-native';
-import styles from '../../styles/StyleCadastro2';
+import styles from '../../styles/Cadastro2.styles';
 import { Input } from '../../Components/Input/Input';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -57,7 +57,7 @@ const Cadastro2 = () => {
                     </View>
                 
 
-                <TouchableOpacity style={styles.button} onPress={handlePerfil}>
+                <TouchableOpacity style={styles.button} onPress={handlePerfil} disabled={isLoading}>
                     <Text style={styles.buttonText}>Cadastrar</Text>
                 </TouchableOpacity>
             </View>

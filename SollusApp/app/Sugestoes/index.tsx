@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Dimensions, ScrollView } from 'react-native';
+import styles from '../../styles/Sugestao.styles';
+import { View, StyleSheet, Text, ScrollView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import SugestaoCard from './SugestaoCard';
 import Header from '../../Components/Header';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDataStore } from '../../store/dataStore';
 
-// const { width, height } = Dimensions.get('window');
+const Container: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return Platform.OS === 'ios' ? (
+    <SafeAreaView style={styles.container}>{children}</SafeAreaView>
+  ) : (
+    <View style={styles.container}>{children}</View>
+  );
+};
 
 const Sugestao = () => {
   const store = useDataStore();
   const [medias, setMedias] = useState(store.medias);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,16 +26,15 @@ const Sugestao = () => {
 
     fetchData();
   }, []);
-  
 
   const dadosSensor = {
-    N: medias?.MediaNitrogenio?.toFixed(2),
-    P: medias?.MediaFosforo?.toFixed(2),
-    K: medias?.MediaPotassio?.toFixed(2),
-    H: medias?.MediaUmidade?.toFixed(2),
-    T: medias?.MediaTemperatura?.toFixed(2),
-    CE: medias?.MediaCondutividade?.toFixed(2),
-    PH: medias?.MediaPH?.toFixed(2),
+    N: (medias?.MediaNitrogenio ?? 0).toFixed(2),
+    P: (medias?.MediaFosforo ?? 0).toFixed(2),
+    K: (medias?.MediaPotassio ?? 0).toFixed(2),
+    H: (medias?.MediaUmidade ?? 0).toFixed(2),
+    T: (medias?.MediaTemperatura ?? 0).toFixed(2),
+    CE: (medias?.MediaCondutividade ?? 0).toFixed(2),
+    PH: (medias?.MediaPH ?? 0).toFixed(2),
   };
 
   const plantas = [
@@ -60,7 +65,7 @@ const Sugestao = () => {
     {
       nome: 'Feijão',
       requisitos: {
-         N: [1, 5],
+        N: [1, 5],
         P: [23, 35],
         K: [15, 27],
         H: [38, 78],
@@ -72,7 +77,7 @@ const Sugestao = () => {
     {
       nome: 'Batata',
       requisitos: {
-         N: [1, 6],
+        N: [1, 6],
         P: [20, 30],
         K: [25, 35],
         H: [30, 60],
@@ -84,19 +89,21 @@ const Sugestao = () => {
   ];
 
   const plantasCompatíveis = plantas.filter((planta) =>
-    Object.entries(planta.requisitos).every(([chave, [min, max]]) => {
-      const valorSensor = dadosSensor[chave as keyof typeof dadosSensor];
-      return Number(valorSensor) >= min && Number(valorSensor) <= max;
+    Object.entries(planta.requisitos).every(([sigla, [min, max]]) => {
+      const valor = parseFloat(dadosSensor[sigla as keyof typeof dadosSensor]);
+      return valor >= min && valor <= max;
     })
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Container>
       <Header title="Sugestões" />
-
       <Text style={styles.texthistorico}>O que você pode plantar?</Text>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
         {plantasCompatíveis.length > 0 ? (
           plantasCompatíveis.map((planta, index) => (
             <SugestaoCard
@@ -104,7 +111,7 @@ const Sugestao = () => {
               data={planta.nome}
               elementos={Object.entries(planta.requisitos).map(([sigla, [min, max]]) => ({
                 sigla,
-                valor: Number(dadosSensor[sigla as keyof typeof dadosSensor]),
+                valor: parseFloat(dadosSensor[sigla as keyof typeof dadosSensor]),
                 unidade:
                   sigla === 'PH'
                     ? ''
@@ -121,33 +128,13 @@ const Sugestao = () => {
             />
           ))
         ) : (
-          <Text style={{ color: 'white', marginTop: 20, fontSize: 20, marginHorizontal: 20 }}>
+          <Text style={styles.noResultsText}>
             Nenhuma planta compatível encontrada com os valores atuais do solo.
           </Text>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0D141C',
-  },
-  texthistorico: {
-    fontSize: 30,
-    fontFamily: 'Roboto-Regular',
-    color: '#fff',
-    textAlign: 'center',
-    marginTop: 14.5,
-    fontWeight: 'bold',
-  },
-  scrollContainer: {
-    paddingBottom: 30,
-    paddingTop: 10,
-    alignItems: 'center',
-  },
-});
 
 export default Sugestao;

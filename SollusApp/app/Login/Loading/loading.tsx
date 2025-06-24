@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import { colors } from "../../styles";
+import { colors } from "../../../styles";
 
 export default function Loading() {
     return(
         <View style={styles.container}>
             <Text style={styles.text}>Olá</Text>
             <Image
-                source={require('../../assets/logo.png')}
+                source={require('../../../assets/logo.png')}
                 style= {{width: 250, height: 100}}
             />
         </View>

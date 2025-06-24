@@ -138,3 +138,32 @@ export const viewProfile = async (req, res) => {
         return res.status(500).json({ message: 'Erro ao buscar perfil do usuário', error: error.message });
     }
 };
+
+export const updateProfilePhoto = async (req, res) => {
+  const userId = req.userId;
+  const { photoUrl } = req.body;
+
+  if (!photoUrl) {
+    return res.status(400).json({ success: false, message: "URL da foto é obrigatória" });
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { photoUrl },
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "Usuário não encontrado" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Foto de perfil atualizada com sucesso",
+      user: updatedUser
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Erro ao atualizar foto de perfil", error: error.message });
+  }
+};

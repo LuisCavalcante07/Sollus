@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-const API_URI = "http://172.20.10.3:5000/api/data";
+const API_URI = "http://192.168.1.17:5000/api/data";
 
 interface Dados {
   id?: number;
