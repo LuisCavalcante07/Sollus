@@ -12,7 +12,7 @@ type InputProps = {
   secureTextEntry?: boolean;
   value: string;
   onChangeText: (text: string) => void;
-  isPassword?: boolean; 
+  isPassword?: boolean;
 };
 
 export const Input = ({
@@ -40,12 +40,15 @@ export const Input = ({
         <TextInput
           style={styles.input}
           placeholder={placeholder}
-          placeholderTextColor={isFocused ? colors.White : '#999'}
+          placeholderTextColor="#999"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onChangeText={onChangeText}
           value={value}
           secureTextEntry={isPassword && !showPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType={isPassword ? 'password' : 'emailAddress'}
         />
 
         {isPassword && (

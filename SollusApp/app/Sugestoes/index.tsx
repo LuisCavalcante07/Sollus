@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Sugestao.styles';
-import { View, StyleSheet, Text, ScrollView, Platform } from 'react-native';
+import { View, Text, ScrollView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SugestaoCard from './SugestaoCard';
 import Header from '../../Components/Header';

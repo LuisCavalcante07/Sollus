@@ -8,24 +8,36 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   StatusBar,
+  Dimensions,
 } from 'react-native';
-import styles from '../../styles/Esqueci.styles'; 
-import { Input } from '../../Components/Input/Input'; 
+import styles from '../../styles/Esqueci.styles';
+import { Input } from '../../Components/Input/Input';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors } from '../../styles'; 
+import { colors } from '../../styles';
+
+const { width, height } = Dimensions.get('window');
 
 const Esqueci = () => {
-  const [user, setUser] = useState('');
-  const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const router = useRouter();
 
-  const handleLogin = () => {
-    Alert.alert('Login', `Email: ${user}\nSenha: ${password}`);
+  const handleConfirm = () => {
+    if (!newPassword || !confirmPassword) {
+      Alert.alert('Erro', 'Por favor, preencha ambos os campos');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Erro', 'As senhas não coincidem');
+      return;
+    }
+    Alert.alert('Sucesso', 'Senha alterada com sucesso!');
+    // Aqui você pode chamar sua função para atualizar senha via API
   };
 
   const voltar = () => {
-    router.push('/Login'); 
+    router.push('/Login');
   };
 
   return (
@@ -36,7 +48,7 @@ const Esqueci = () => {
           name="arrow-left-circle"
           size={39}
           color={colors.StrongGreen}
-          style={{ position: 'absolute', top: 17, left: 25, marginTop: 50 }}
+          style={[styles.backIcon, { top: height * 0.05, left: width * 0.035 }]}
           onPress={voltar}
         />
         <View style={styles.logoContainer}>
@@ -47,22 +59,23 @@ const Esqueci = () => {
         <View style={styles.inputContainer}>
           <Input
             label="Nova senha"
-            icone="person-outline"
+            icone="lock-outline"
             placeholder="Escreva sua nova senha"
-            onChangeText={setUser}
-            value={user}
+            onChangeText={setNewPassword}
+            value={newPassword}
+            secureTextEntry
           />
           <Input
             label="Confirme sua senha"
             icone="lock-outline"
             placeholder="Confirme sua senha"
-            secureTextEntry={true}
-            onChangeText={setPassword}
-            value={password}
+            secureTextEntry
+            onChangeText={setConfirmPassword}
+            value={confirmPassword}
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={handleConfirm}>
           <Text style={styles.buttonText}>Confirmar</Text>
         </TouchableOpacity>
       </View>

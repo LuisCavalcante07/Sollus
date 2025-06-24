@@ -1,8 +1,7 @@
 import React, { useRef } from 'react';
 import styles from '../../styles/Relatorio.styles';
 import { 
-  View, StyleSheet, Text, Image, Dimensions, 
-  TouchableOpacity, Animated, Platform 
+  View, Text, Image, TouchableOpacity, Animated, Platform 
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { jsPDF } from 'jspdf';
@@ -43,7 +42,7 @@ const Relatorio = () => {
     animateButton();
 
     try {
-      await fetchMedia();  // atualiza as médias do store
+      await fetchMedia();
 
       if (!medias || Object.keys(medias).length === 0) {
         alert("Médias ainda não carregadas.");
@@ -139,7 +138,6 @@ const Relatorio = () => {
           onPress={aoPressionarBotao}
           activeOpacity={0.8}
         >
-          {/* Animated.View animando grupo de ícone + texto */}
           <Animated.View style={{ transform: [{ scale: scaleAnim }], flexDirection: 'row', alignItems: 'center' }}>
             <Feather name="download" size={18} color={White} />
             <Text style={[styles.buttonText, { marginLeft: 6 }]}>Baixar Relatório</Text>

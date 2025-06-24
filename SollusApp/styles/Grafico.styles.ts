@@ -1,46 +1,46 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const { height } = Dimensions.get('window');
 
-const styles = StyleSheet.create({
+export default StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#0D141C',
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#0D141C',
-    paddingTop: 20,
-  },
-  menuContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  titleGrafico: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  graphContainer: {
-    width: SCREEN_WIDTH,
-    flex: 1,
-    alignItems: 'center',
-  },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0D141C',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
+    marginTop: 12,
     color: '#fff',
-    marginTop: 10,
     fontSize: 16,
   },
+  menuContainer: {
+    width: '90%',
+    marginTop: 15,
+    marginBottom: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
+    alignItems: 'center',
+    marginLeft: 20,
+  },
+  titleGrafico: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  graphScrollContainer: {
+    flex: 1,
+    width: '100%',
+  },
+  graphContainer: {
+    paddingHorizontal: 15,
+    paddingBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: height * 0.7,
+  },
 });
-
-export default styles;

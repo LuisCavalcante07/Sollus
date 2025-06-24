@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import { colors } from '../../styles';
 
 const styles = StyleSheet.create({
@@ -18,22 +18,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 7,
-    elevation: 5,
     marginTop: 5,
+
+    // Sombra adaptada para compatibilidade
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 4px 7px rgba(0,0,0,0.25)' }
+      : {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.25,
+          shadowRadius: 7,
+          elevation: 5,
+        }),
   },
   icon: {
     marginRight: 15,
   },
   input: {
     lineHeight: 20,
-    paddingVertical: 0,
     fontSize: 16,
     color: colors.White,
     flex: 1,
+    paddingVertical: Platform.OS === 'web' ? 6 : 0, 
   },
   eyeIcon: {
     marginLeft: 10,

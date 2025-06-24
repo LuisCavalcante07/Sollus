@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, StatusBar, Image } from 'react-native';
+import React, { useState } from 'react';
+import {
+  Text, View, TouchableOpacity, Alert, Platform,
+  KeyboardAvoidingView, ScrollView, Keyboard, StatusBar, Image, TouchableWithoutFeedback
+} from 'react-native';
 import styles from '../../styles/Cadastro.styles';
 import { Input } from '../../Components/Input/Input';
 import { useRouter } from 'expo-router';
@@ -8,65 +11,106 @@ import { colors } from '../../styles';
 import { useAuthStore } from '../../store/authStore';
 
 const Cadastro = () => {
-    const router = useRouter();
-    const { signup, error, isLoading } = useAuthStore();
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [confirmpassword, setConfirmPassword] = useState<string>('');
-    const [passwordError, setPasswordError] = useState<string>('');
-    const [visiblePassword, setVisiblePassword] = useState<boolean>(false);
+  const router = useRouter();
+  const { signup, error, isLoading } = useAuthStore();
 
-    const handleCadastro = async () => {
-    
-        if (password !== confirmpassword) {
-            setPasswordError("As senhas não coincidem");
-            return;
-        }
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmpassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-        setPasswordError("");
-        router.push({
-            pathname: "Cadastro2",
-            params: {email, password, confirmpassword}
-        });
-    };
-    
+  const handleCadastro = async () => {
+    if (password !== confirmpassword) {
+      setPasswordError('As senhas não coincidem');
+      return;
+    }
 
-    return (
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={styles.container}>
-                <StatusBar barStyle="light-content" />
+    setPasswordError('');
+    router.push({
+      pathname: 'Cadastro2',
+      params: { email, password, confirmpassword },
+    });
+  };
 
-                <MaterialCommunityIcons
-                    name="arrow-left-circle"
-                    size={39}
-                    color={colors.StrongGreen}
-                    style={{ position: 'absolute', top: 17, left: 25, marginTop: 50 }}
-                    onPress={() => router.push("Login")}
-                />
+  const Content = (
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      {Platform.OS !== 'web' && (
+        <StatusBar barStyle="light-content" backgroundColor={colors.DarkBlue} />
+      )}
 
-                <View style={[styles.logoContainer, { marginTop: 80 }]}>
-                    <Image source={require('../../assets/logotext.png')} style={styles.logo} />
-                    <Text style={styles.title}>Criar conta</Text>
-                </View>
+      <MaterialCommunityIcons
+        name="arrow-left-circle"
+        size={39}
+        color={colors.StrongGreen}
+        style={styles.iconBack}
+        onPress={() => router.push('Login')}
+      />
 
-                <View style={styles.inputContainer}>
-                    <Input label="Email" icone="mail-outline" placeholder="Digite seu email" onChangeText={setEmail} value={email} />
-                    <Input label="Senha" icone="lock-outline" isPassword={true} placeholder="Digite sua senha" secureTextEntry={true} onChangeText={setPassword} value={password}/>
-                    <Input label="Confirmar senha" icone="lock-outline" isPassword={true} placeholder="Digite novamente sua senha" secureTextEntry={true} onChangeText={setConfirmPassword} value={confirmpassword}/>
-                </View>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../assets/logotext.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <Text style={styles.title}>Criar conta</Text>
+      </View>
 
-                {passwordError !== '' && (
-                    <Text style={{ fontSize: 19, color: '#E40606', marginTop: 12}}>{passwordError}</Text>
-                )}
+      <View style={styles.inputContainer}>
+        <Input
+          label="Email"
+          icone="mail-outline"
+          placeholder="Digite seu email"
+          onChangeText={setEmail}
+          value={email}
+        />
+        <Input
+          label="Senha"
+          icone="lock-outline"
+          isPassword
+          placeholder="Digite sua senha"
+          secureTextEntry
+          onChangeText={setPassword}
+          value={password}
+        />
+        <Input
+          label="Confirmar senha"
+          icone="lock-outline"
+          isPassword
+          placeholder="Digite novamente sua senha"
+          secureTextEntry
+          onChangeText={setConfirmPassword}
+          value={confirmpassword}
+        />
+        {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+      </View>
 
-                <TouchableOpacity style={styles.button} onPress={handleCadastro} disabled={isLoading}>
-                    <Text style={styles.buttonText}>Avançar</Text>
-                </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleCadastro}
+        disabled={isLoading}
+      >
+        <Text style={styles.buttonText}>Avançar</Text>
+      </TouchableOpacity>
 
-                {error && <Text style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>{error}</Text>}
-            </View>
-        </TouchableWithoutFeedback>
-    );
+      {!!error && <Text style={styles.errorText}>{error}</Text>}
+    </ScrollView>
+  );
+
+  if (Platform.OS === 'web') {
+    return <View style={{ flex: 1 }}>{Content}</View>;
+  }
+
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        {Content}
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
+  );
 };
 
 export default Cadastro;

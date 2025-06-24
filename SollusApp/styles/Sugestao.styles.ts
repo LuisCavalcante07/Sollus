@@ -1,4 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -6,7 +8,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0D141C',
   },
   texthistorico: {
-    fontSize: 28,
+    fontSize: width * 0.07,
     color: '#fff',
     textAlign: 'center',
     marginTop: 14,
@@ -20,7 +22,7 @@ const styles = StyleSheet.create({
   noResultsText: {
     color: 'white',
     marginTop: 20,
-    fontSize: 18,
+    fontSize: width * 0.05,
     marginHorizontal: 20,
     textAlign: 'center',
   },

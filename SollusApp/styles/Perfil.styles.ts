@@ -1,0 +1,192 @@
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width, height } = Dimensions.get('window');
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0D141C',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#0D141C',
+    alignItems: 'center',
+  },
+  header: {
+    width: '100%',
+    height: height * 0.08,
+    paddingHorizontal: width * 0.05,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#21242D',
+    justifyContent: 'space-between',
+    elevation: 10,
+  },
+  arrowButton: {
+    padding: 5,
+  },
+  viewBem: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bemVindo: {
+    color: '#FFFEFF',
+    fontSize: width * 0.05,
+    fontWeight: '600',
+  },
+  logoimagem: {
+    width: width * 0.1,
+    height: width * 0.1,
+  },
+  Foto: {
+    marginTop: height * 0.04,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wrapperFoto: {
+    width: width * 0.4,
+    height: width * 0.4,
+    borderRadius: (width * 0.4) / 2,
+    backgroundColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    shadowColor: '#00B15E',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    elevation: 12,
+  },
+  imagemPerfil: {
+    width: '100%',
+    height: '100%',
+    borderRadius: (width * 0.4) / 2,
+    overflow: 'hidden',
+  },
+  botaoEditar: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#00B15E',
+    borderRadius: 999,
+    width: width * 0.1,
+    height: width * 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFF',
+    elevation: 5,
+  },
+  info: {
+    marginTop: height * 0.06,
+    width: '90%',
+  },
+  infoItem: {
+    backgroundColor: '#21242D',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: width * 0.03,
+    marginVertical: height * 0.01,
+  },
+  iconInfo: {
+    width: width * 0.06,
+    height: width * 0.06,
+    marginRight: width * 0.025,
+  },
+  InfoNome: {
+    color: "#00B15E",
+    fontSize: width * 0.045,
+    fontWeight: '600',
+  },
+  botoes: {
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: height * 0.08,
+    alignSelf: 'center',
+  },
+  Sair: {
+    borderRadius: 16,
+    backgroundColor: "#ab2424",
+    width: width * 0.4,
+    height: height * 0.07,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: width * 0.02,
+    elevation: 8,
+  },
+  Editar: {
+    borderRadius: 16,
+    backgroundColor: "#00B15E",
+    width: width * 0.4,
+    height: height * 0.07,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: width * 0.02,
+    elevation: 8,
+  },
+  botaoTexto: {
+    color: '#FFF',
+    fontSize: width * 0.045,
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#FFF',
+    padding: width * 0.05,
+    borderRadius: 20,
+    alignItems: 'center',
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: width * 0.05,
+    fontWeight: 'bold',
+    marginBottom: height * 0.025,
+    color: '#0D141C',
+  },
+  modalButton: {
+    backgroundColor: '#00B15E',
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.06,
+    borderRadius: 12,
+    width: '100%',
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: '#FFF',
+    fontSize: width * 0.04,
+    fontWeight: 'bold',
+  },
+  zoomOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zoomContent: {
+    width: '90%',
+    height: '70%',
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: '#121212',
+    borderWidth: 1,
+    borderColor: '#00B15E',
+  },
+  zoomedImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
+  },
+  Icon: {
+    marginRight: width * 0.025,
+  }
+});
+
+export default styles;
